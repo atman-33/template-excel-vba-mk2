@@ -12,79 +12,89 @@ Option Explicit
 Private Const SHEET_NAME = "Sample1"
 Private Const TABLE_NAME = "sample1_tbl1"
 
+Private Sub CommandButton1_Click()
+    MsgBox "test"
+End Sub
+
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-' Brief : 各テーブルのデータを更新
+' Summary : 各テーブルのデータを更新
 ' Note  :
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Private Sub GetDataButton_Click()
 
-    Call ExecuteSelectSqls
+    Dim tableCls As New TableSample
+    Call tableCls.LoadData
     
     MsgBox "データを更新しました。"
 
 End Sub
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-' Brief : 昇順に並び替え
+' Summary : 昇順に並び替え
 ' Note  :
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Private Sub SampleIdOrderByButton_Click()
 
-    Dim table As ExListObject
-    Set table = New ExListObject
-    
-    table.ListObject = ThisWorkbook.Worksheets(SHEET_NAME).ListObjects(TABLE_NAME)
-    
-    table.OrderBy "SAMPLE_ID"
+    Dim tableCls As New TableSample
+    Call tableCls.OrderBy
 
 End Sub
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-' Brief : 降順に並び替え
+' Summary : 降順に並び替え
 ' Note  :
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Private Sub SampleIdOrderByDescendingButton_Click()
 
-    Dim table As ExListObject
-    Set table = New ExListObject
-    
-    table.ListObject = ThisWorkbook.Worksheets(SHEET_NAME).ListObjects(TABLE_NAME)
-    
-    table.OrderByDescending "SAMPLE_ID"
+    Dim tableCls As New TableSample
+    Call tableCls.OrderByDescending
 
 End Sub
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-' Brief : テーブルをフィルター
+' Summary : テーブルをフィルター
 ' Note  :
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Private Sub FilterButton_Click()
 
-    Dim table As ExListObject
-    Set table = New ExListObject
-    
-    table.ListObject = ThisWorkbook.Worksheets(SHEET_NAME).ListObjects(TABLE_NAME)
-
-    Dim conditions As Collection
-    Set conditions = New Collection
-    
-    conditions.Add ("aaa")
-    conditions.Add ("ccc")
-    
-    table.Filter "SAMPLE_TEXT", conditions
+    Dim tableCls As New TableSample
+    Call tableCls.Filter
     
 End Sub
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-' Brief : テーブルのフィルターを解除
+' Summary : テーブルのフィルターを解除
 ' Note  :
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Private Sub FilterClearButton_Click()
 
-    Dim table As ExListObject
-    Set table = New ExListObject
-    
-    table.ListObject = ThisWorkbook.Worksheets(SHEET_NAME).ListObjects(TABLE_NAME)
-    table.FilterClear
+    Dim tableCls As New TableSample
+    Call tableCls.FilterClear
 
 End Sub
+
+' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
+' Summary : 全レコードのデータ保存
+' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
+Private Sub SaveAllButton_Click()
+
+    Dim tableCls As New TableSample
+    Call tableCls.SaveAll
+    
+    MsgBox "全レコードのデータを保存しました。"
+
+End Sub
+
+' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
+' Summary : 1レコードのデータ保存もしくは削除
+' Note  :
+' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
+Private Sub Worksheet_BeforeDoubleClick(ByVal Target As Range, Cancel As Boolean)
+
+    Debug.Print "Double Clicked!"
+    
+    Dim tableCls As New TableSample
+    Call tableCls.SaveOrDeleteOne(Target, Cancel)
+
+End Sub
+

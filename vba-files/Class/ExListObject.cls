@@ -17,8 +17,7 @@ Private listObject_ As ListObject
 
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-' Brief : ListObjectプロパティ
-' Note  :
+' Summary : ListObjectプロパティ
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Public Property Let ListObject(ByRef lo As ListObject)
     Set listObject_ = lo
@@ -30,8 +29,7 @@ End Property
 
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-' Brief : 指定したカラムに対して、昇順で並び替え
-' Note  :
+' Summary : 指定したカラムに対して、昇順で並び替え
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Public Sub OrderBy(colName As String)
 
@@ -40,8 +38,7 @@ Public Sub OrderBy(colName As String)
 End Sub
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-' Brief : 指定したカラムに対して、降順で並び替え
-' Note  :
+' Summary : 指定したカラムに対して、降順で並び替え
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Public Sub OrderByDescending(colName As String)
 
@@ -50,8 +47,7 @@ Public Sub OrderByDescending(colName As String)
 End Sub
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-' Brief : 指定したカラムに対して、フィルター
-' Note  :
+' Summary : 指定したカラムに対して、フィルター
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Public Sub Filter(colName As String, criterias As Collection)
 
@@ -67,8 +63,7 @@ Public Sub Filter(colName As String, criterias As Collection)
 End Sub
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-' Brief : フィルターをクリア
-' Note  :
+' Summary : フィルターをクリア
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Public Sub FilterClear()
 
@@ -81,8 +76,8 @@ Public Sub FilterClear()
 End Sub
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-' Brief : コレクションを 1 次元配列に変換
-' Note  : 配列のインデックスは 0 から開始
+' Summary : コレクションを 1 次元配列に変換
+'           配列のインデックスは 0 から開始
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Private Function CollectionToArray(ByVal colTarget As Collection) As Variant
     

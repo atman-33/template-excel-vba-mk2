@@ -19,8 +19,7 @@ Private connection_ As Object    ' Connection
 Private recordset_ As Object     ' Recordset
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-' Brief : コンストラクタ
-' Note  :
+' Summary : コンストラクタ
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Private Sub Class_Initialize()
     
@@ -30,15 +29,14 @@ Private Sub Class_Initialize()
 End Sub
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-' Brief : オラクルへの接続処理
-' Note  :
+' Summary : オラクルへの接続処理
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-Public Sub IDao_OpenConnection(servicename As String, username As String, password As String)
+Public Sub IDao_OpenConnection(dataSource As String, username As String, password As String)
     
     Dim constr As String
     
     constr = "Provider=" & "OraOLEDB.Oracle" _
-                & ";Data Source=" & servicename _
+                & ";Data Source=" & dataSource _
                 & ";User ID=" & username _
                 & ";Password=" & password & ";"
     
@@ -50,8 +48,7 @@ Public Sub IDao_OpenConnection(servicename As String, username As String, passwo
 End Sub
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-' Brief : トランザクション開始処理
-' Note  :
+' Summary : トランザクション開始処理
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Public Sub BeginTrans()
 
@@ -61,8 +58,7 @@ Public Sub BeginTrans()
 End Sub
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-' Brief : コミット処理
-' Note  :
+' Summary : コミット処理
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Public Sub CommitTrans()
     
@@ -72,8 +68,7 @@ Public Sub CommitTrans()
 End Sub
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-' Brief : ロールバック処理
-' Note  :
+' Summary : ロールバック処理
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Public Sub RollbackTrans()
     
@@ -83,8 +78,7 @@ Public Sub RollbackTrans()
 End Sub
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-' Brief : DB切断処理
-' Note  :
+' Summary : DB切断処理
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Public Sub IDao_CloseConnection()
 
@@ -102,17 +96,17 @@ Public Sub IDao_CloseConnection()
 End Sub
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-' Brief : レコードセットのクローズ
-' Note  : SQL実行でレコードセットにデータが格納された後はクローズ必要
-'         （連続でSQLを実行してレコードセットをOpenすることはできない
+' Summary : レコードセットのクローズ
+'           SQL実行でレコードセットにデータが格納された後はクローズ必要
+'           （連続でSQLを実行してレコードセットをOpenすることはできない）
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Public Sub IDao_CloseRecordset()
     recordset_.Close
 End Sub
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-' Brief : SQLの実行（SELECT）
-' Note  : SELECT文の実行後は、レコードセットにデータが格納される。
+' Summary : SQLの実行（SELECT）
+'           SELECT文の実行後は、レコードセットにデータが格納される。
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Public Sub IDao_Query(sql As String)
         
@@ -122,8 +116,7 @@ Public Sub IDao_Query(sql As String)
 End Sub
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-' Brief : SQLの実行（INSERT,UPDATE,DELETE）
-' Note  :
+' Summary : SQLの実行（INSERT,UPDATE,DELETE）
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Public Function IDao_Execute(sql As String) As Long
 
@@ -162,8 +155,7 @@ Finally:
 End Function
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-' Brief : UPDATEを実行し、対象レコードが無ければINSERT
-' Note  :
+' Summary : UPDATEを実行し、対象レコードが無ければINSERT
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Public Sub IDao_Save(insert As String, update As String)
     
@@ -181,11 +173,10 @@ Public Sub IDao_Save(insert As String, update As String)
 End Sub
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-' Brief : テーブルのレコードをSave
-' Note  :
+' Summary : テーブルのレコードをSave
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Public Sub IDao_SaveRecord(table As ListObject, rowIndex As Long, dbTable As String, _
-                           updateColumns As Collection, conditions As Collection)
+                           keyColumns As Collection, updateColumns As Collection)
 
     Dim insert As String, update As String
     Dim col As Variant, val As String
@@ -193,13 +184,13 @@ Public Sub IDao_SaveRecord(table As ListObject, rowIndex As Long, dbTable As Str
     insert = "INSERT INTO __Table__ (__InsertColumns__) VALUES (__InsertValues__)"
     update = "UPDATE __Table__ SET __UpdateColumns__ WHERE __Conditions__"
 
-    ' INSERT文を生成
+    ' INSERT文を生成（INSERT文は、 keyColumns と updateColumns を合わせた文）
     Dim insertColumnsParts As String, insertValuesParts As String
     
     insertColumnsParts = ""
     insertValuesParts = ""
     
-    For Each col In conditions
+    For Each col In keyColumns
         
         ' カラム
         If insertColumnsParts = "" Then
@@ -260,7 +251,7 @@ Public Sub IDao_SaveRecord(table As ListObject, rowIndex As Long, dbTable As Str
         
     Next
     
-    For Each col In conditions
+    For Each col In keyColumns
         
         ' 値
         val = table.ListColumns(col).DataBodyRange(rowIndex)
@@ -286,8 +277,7 @@ End Sub
 
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-' Brief : テーブルのレコードをDelete
-' Note  :
+' Summary : テーブルのレコードをDelete
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Public Sub IDao_DeleteRecord(table As ListObject, rowIndex As Long, dbTable As String, _
                              conditions As Collection)
@@ -327,8 +317,8 @@ End Sub
 
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-' Brief : 実行したSQLで取得したレコードセットをExcelに貼り付け
-' Note  : filedsExists => Trueでフィールド名も書き込み
+' Summary : 実行したSQLで取得したレコードセットをExcelに貼り付け
+'           filedsExists => Trueでフィールド名も書き込み
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Public Sub PasteRecordset(sheet As Worksheet, startRow As Long, startCol As Long, filedsExists As Boolean)
 
@@ -351,8 +341,7 @@ Public Sub PasteRecordset(sheet As Worksheet, startRow As Long, startCol As Long
 End Sub
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-' Brief : 実行したSQLで取得したレコードセットをExcelテーブルに貼り付け
-' Note  :
+' Summary : 実行したSQLで取得したレコードセットをExcelテーブルに貼り付け
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Public Sub IDao_PasteRecordsetToTable(table As ListObject)
 

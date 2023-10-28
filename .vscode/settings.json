@@ -1,0 +1,11 @@
+{
+  "files.associations": {
+    "*.cls": "vba",
+    "*.bas": "vba",
+  },
+  "files.encoding": "utf8",
+  "files.autoGuessEncoding": true,
+  "[vba]": {
+    "files.encoding": "shiftjis",
+  }
+}

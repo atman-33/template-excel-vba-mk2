@@ -13,7 +13,7 @@ Option Explicit
 ' インターフェース：IDao
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 
-Public Sub OpenConnection(servicename As String, username As String, password As String)
+Public Sub OpenConnection(dataSource As String, username As String, password As String)
 End Sub
 
 Public Sub Query(sql As String)
@@ -22,18 +22,14 @@ End Sub
 Public Function Execute(sql As String) As Long
 End Function
 
-
 Public Sub Save(insert As String, update As String)
 End Sub
 
-Public Sub SaveRecord(table As ListObject, rowIndex As Long, dbTable As String, _
-                      updateColumns As Collection, conditions As Collection)
+Public Sub SaveRecord(table As ListObject, rowIndex As Long, dbTable As String, keyColumns As Collection, updateColumns As Collection)
 End Sub
 
-Public Sub DeleteRecord(table As ListObject, rowIndex As Long, dbTable As String, _
-                             conditions As Collection)
+Public Sub DeleteRecord(table As ListObject, rowIndex As Long, dbTable As String, conditions As Collection)
 End Sub
-
 
 Public Sub PasteRecordsetToTable(table As ListObject)
 End Sub

@@ -2,10 +2,17 @@ Attribute VB_Name = "Tests"
 Option Explicit
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-' Brief :
-' Note  :
+' Summary :
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 
+
+' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
+Private Sub コンフィグクラスをテスト()
+    Dim conf As Config
+    Set conf = New Config
+    
+    Debug.Print conf.Item("ORA_DATA_SOURCE")
+End Sub
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Private Sub Oracleテーブルのデータを取得する()
