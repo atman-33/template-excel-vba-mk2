@@ -14,7 +14,8 @@
 |   |- ExListObject     : テーブル（ListObject）の機能拡張クラス
 |   |- IDao             : DAOクラスのインターフェース
 |   |- Repository       : DAOクラスを利用するリポジトリクラス
-|   |- TableSample      : Excelテーブルを操作するクラス（TableSample の Sample は例）
+|   |- TableXxx         : Excelテーブルを操作するクラス
+|   |- SheetXxx         : Excelシートを操作するクラス
 |
 
 ```
