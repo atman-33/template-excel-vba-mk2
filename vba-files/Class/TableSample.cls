@@ -15,7 +15,7 @@ Option Explicit
 
 ' ---- ’è”İ’è ---- '
 Const SHEET_NAME = "Sample1"
-Const TABLE_NAME = "SampleTable"
+Const TABLE_NAME = "SampleTable_tbl"
 
 Const COL_ID = "ID"
 Const COL_TEXT = "TEXT"

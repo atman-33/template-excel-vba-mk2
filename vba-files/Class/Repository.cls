@@ -15,7 +15,7 @@ Option Explicit
 
 ' ---- íËêîê›íË ---- '
 Const SQL_SHEET = "SQL"
-Const SQL_TABLE = "sqlTable"
+Const SQL_TABLE = "SQL_tbl"
 Const SQL_COL_NAME = "Name"
 Const SQL_COL_SHEET = "Sheet"
 Const SQL_COL_TABLE = "Table"

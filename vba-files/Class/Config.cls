@@ -15,7 +15,7 @@ Option Explicit
 
 ' ---- íËêîê›íË ---- '
 Const CONFIG_SHEET = "Config"
-Const CONFIG_TABLE = "ConfigTable"
+Const CONFIG_TABLE = "Config_tbl"
 Const CONFIG_COL_KEY = "Key"
 Const CONFIG_COL_ITEM = "Item"
 ' ------------------ '
