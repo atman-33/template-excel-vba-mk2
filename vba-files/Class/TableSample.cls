@@ -45,25 +45,31 @@ Private dbUpdateCols As Collection
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Private Sub Class_Initialize()
         
-    ' ---- テーブル設定 ---- '
+    ' Config設定
+    Dim conf As New Config
+        
+    ' テーブル設定
     Set listObject_ = ThisWorkbook.Worksheets(SHEET_NAME).ListObjects(TABLE_NAME)
     
-    ' ---- リポジトリ設定 ---- '
-    Dim conf As New Config
-    Set repository_ = New Repository
-    Call repository_.InitOracleOra(conf.Item("ORA_DATA_SOURCE"), conf.Item("ORA_USER_ID"), conf.Item("ORA_PASSWORD"))
+    ' DAO設定
+    Dim dao As New DaoOracleOra
+    Call dao.Init(conf.Item("ORA_DATA_SOURCE"), conf.Item("ORA_USER_ID"), conf.Item("ORA_PASSWORD"))
     
-    ' ---- DB CRUD処理用コレクション設定 ---- '
+    ' リポジトリ設定
+    Set repository_ = New Repository
+    Call repository_.Init(dao)
+    
+    ' DB CRUD処理用コレクション設定
     Dim varItem As Variant
     
-    ' キーカラムを格納
+    ' キーカラムを格納（配列をコレクションに変換）
     Set dbKeyCols = New Collection
     Dim keyColArray As Variant: keyColArray = Split(DB_KEY_COLS, ",")
         For Each varItem In keyColArray
         Call dbKeyCols.Add(varItem)
     Next
 
-    ' キーでないカラムを格納
+    ' キーでないカラムを格納（配列をコレクションに変換）
     Set dbUpdateCols = New Collection
     Dim updateColArray As Variant: updateColArray = Split(DB_UPDATE_COLS, ",")
     For Each varItem In updateColArray
@@ -82,24 +88,24 @@ End Sub
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 ' Summary : 昇順にソート
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-Public Sub OrderBy()
+Public Sub OrderBy(varColumn As String)
     
     Dim exTable As New ExListObject
     exTable.ListObject = listObject_
     
-    Call exTable.OrderBy(COL_ID)
+    Call exTable.OrderBy(varColumn)
 
 End Sub
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 ' Summary : 降順にソート
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-Public Sub OrderByDescending()
+Public Sub OrderByDescending(varColumn As String)
     
     Dim exTable As New ExListObject
     exTable.ListObject = listObject_
     
-    Call exTable.OrderByDescending(COL_ID)
+    Call exTable.OrderByDescending(varColumn)
 
 End Sub
 
@@ -107,18 +113,12 @@ End Sub
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 ' Summary : テーブルをフィルター
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-Public Sub Filter()
+Public Sub Filter(varColumn As String, keywords As Collection)
     
     Dim exTable As New ExListObject
     exTable.ListObject = listObject_
     
-    Dim kewords As Collection
-    Set kewords = New Collection
-    
-    kewords.Add ("aaa")
-    kewords.Add ("ccc")
-    
-    Call exTable.Filter(COL_TEXT, kewords)
+    Call exTable.Filter(varColumn, keywords)
 End Sub
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
@@ -150,11 +150,6 @@ End Sub
 ' Summary : 1レコードのデータ保存もしくは削除
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Public Sub SaveOrDeleteOne(ByVal Target As Range, Cancel As Boolean)
-
-'    Dim table As ListObject
-'    Set table = ThisWorkbook.Worksheets(SHEET_NAME).ListObjects(TABLE_NAME)
-    
-    ' Debug.Print table.ListColumns(SAVE_COL_NAME).DataBodyRange.Address
     
     ' 行インデックスを取得
     Dim indexRow As Long

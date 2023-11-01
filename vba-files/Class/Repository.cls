@@ -25,32 +25,13 @@ Const SQL_COL_SQL = "SQL"
 ' DAO
 Private dao_ As IDao
 
-' DB接続モード
-Private connectionMode_ As Integer
-
-' Oracle接続情報
-Private ora_data_source_ As String
-Private ora_user_id_ As String
-Private ora_password_ As String
-
-' DB接続モード
-Enum ConnectionModeEnum
-    OracleOra = 1
-    Access = 2
-End Enum
-
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-' Summary : 初期化（Oracle ver）
+' Summary : 初期化
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-Public Sub InitOracleOra(dataSource As String, username As String, password As String)
+Public Sub Init(dao As IDao)
     
-    Set dao_ = New DaoOracleOra
-    
-    ora_data_source_ = dataSource
-    ora_user_id_ = username
-    ora_password_ = password
-    
-    connectionMode_ = ConnectionModeEnum.OracleOra
+    Set dao_ = dao
+        
 End Sub
 
 
@@ -60,7 +41,7 @@ End Sub
 Public Sub ExecuteSelectSqls()
                     
     ' DB接続
-    Call OpenConnection(connectionMode_)
+    Call dao_.OpenConnection
     
     ' SQLテーブルを格納
     Dim table As ListObject
@@ -104,7 +85,7 @@ End Sub
 Public Sub ExecuteSelectSql(tableName As String)
                     
     ' DB接続
-    Call OpenConnection(connectionMode_)
+    Call dao_.OpenConnection
     
     ' SQLテーブルを格納
     Dim table As ListObject
@@ -155,7 +136,7 @@ Public Sub SaveRecords(table As ListObject, dbTable As String, _
                        keyColumns As Collection, updateColumns As Collection)
                         
     ' DB接続
-    Call OpenConnection(connectionMode_)
+    Call dao_.OpenConnection
     
     Dim i As Long
     For i = 1 To table.ListRows.Count
@@ -164,7 +145,6 @@ Public Sub SaveRecords(table As ListObject, dbTable As String, _
 
 End Sub
 
-
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 ' Summary : テーブルの1レコードを保存
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
@@ -172,7 +152,7 @@ Public Sub SaveRecord(table As ListObject, rowIndex As Long, dbTable As String, 
                        keyColumns As Collection, updateColumns As Collection)
     
     ' DB接続
-    Call OpenConnection(connectionMode_)
+    Call dao_.OpenConnection
     Call dao_.SaveRecord(table, rowIndex, dbTable, keyColumns, updateColumns)
 
 End Sub
@@ -184,36 +164,9 @@ Public Sub DeleteRecord(table As ListObject, rowIndex As Long, dbTable As String
                         keyColumns As Collection)
     
     ' DB接続
-    Call OpenConnection(connectionMode_)
+    Call dao_.OpenConnection
     Call dao_.DeleteRecord(table, rowIndex, dbTable, keyColumns)
 
 End Sub
 
-
-' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-' Summary : Oracle接続テスト
-' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-Public Sub TestOpenConnectionOracleOra()
-                            
-    ' Oracle接続
-    Call dao_.OpenConnection(ora_data_source_, ora_user_id_, ora_password_)
-    
-    MsgBox "Oracle接続テスト 成功"
-
-End Sub
-
-' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-' Summary : DB接続
-' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-Private Sub OpenConnection(connectionMode As Integer)
-                    
-    If connectionMode = ConnectionModeEnum.OracleOra Then
-        ' Oracle接続
-        Set dao_ = New DaoOracleOra
-        Call dao_.OpenConnection(ora_data_source_, ora_user_id_, ora_password_)
-        Exit Sub
-    
-    End If
-                    
-End Sub
 

@@ -36,7 +36,7 @@ End Sub
 Private Sub SampleIdOrderByButton_Click()
 
     Dim tableCls As New TableSample
-    Call tableCls.OrderBy
+    Call tableCls.OrderBy("ID")
 
 End Sub
 
@@ -47,7 +47,7 @@ End Sub
 Private Sub SampleIdOrderByDescendingButton_Click()
 
     Dim tableCls As New TableSample
-    Call tableCls.OrderByDescending
+    Call tableCls.OrderByDescending("ID")
 
 End Sub
 
@@ -57,8 +57,14 @@ End Sub
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Private Sub FilterButton_Click()
 
+    Dim keywords As Collection
+    Set keywords = New Collection
+
+    keywords.Add ("aaa")
+    keywords.Add ("ccc")
+
     Dim tableCls As New TableSample
-    Call tableCls.Filter
+    Call tableCls.Filter("TEXT", keywords)
     
 End Sub
 

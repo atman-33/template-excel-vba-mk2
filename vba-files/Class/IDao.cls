@@ -13,7 +13,7 @@ Option Explicit
 ' インターフェース：IDao
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 
-Public Sub OpenConnection(dataSource As String, username As String, password As String)
+Public Sub OpenConnection()
 End Sub
 
 Public Sub Query(sql As String)

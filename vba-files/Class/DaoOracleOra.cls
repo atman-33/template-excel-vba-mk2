@@ -18,6 +18,11 @@ Implements IDao
 Private connection_ As Object    ' Connection
 Private recordset_ As Object     ' Recordset
 
+' Oracle接続情報
+Private ora_data_source_ As String
+Private ora_user_id_ As String
+Private ora_password_ As String
+
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 ' Summary : コンストラクタ
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
@@ -29,16 +34,27 @@ Private Sub Class_Initialize()
 End Sub
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
+' Summary : 初期化
+' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
+Public Sub Init(dataSource As String, username As String, password As String)
+    
+    ora_data_source_ = dataSource
+    ora_user_id_ = username
+    ora_password_ = password
+    
+End Sub
+
+' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 ' Summary : オラクルへの接続処理
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-Public Sub IDao_OpenConnection(dataSource As String, username As String, password As String)
+Public Sub IDao_OpenConnection()
     
     Dim constr As String
     
     constr = "Provider=" & "OraOLEDB.Oracle" _
-                & ";Data Source=" & dataSource _
-                & ";User ID=" & username _
-                & ";Password=" & password & ";"
+                & ";Data Source=" & ora_data_source_ _
+                & ";User ID=" & ora_user_id_ _
+                & ";Password=" & ora_password_ & ";"
     
     Debug.Print (constr)
     connection_.ConnectionString = constr
@@ -142,7 +158,7 @@ ErrorHandler:
     'エラーメッセージを表示する
     Debug.Print "[No:" & Err.Number & "]" & Err.Description
     MsgBox "[No:" & Err.Number & "]" & Err.Description, vbCritical & vbOKOnly, "エラー"
-        
+    MsgBox sql
     MsgBox "エラー発生のためマクロを終了します。", vbCritical & vbOKOnly, "エラー"
     End
         
@@ -314,8 +330,6 @@ Public Sub IDao_DeleteRecord(table As ListObject, rowIndex As Long, dbTable As S
 
 End Sub
 
-
-
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 ' Summary : 実行したSQLで取得したレコードセットをExcelに貼り付け
 '           filedsExists => Trueでフィールド名も書き込み
@@ -382,5 +396,17 @@ Public Sub IDao_PasteRecordsetToTable(table As ListObject)
 '        y = y + 1
 '        recordset_.MoveNext
 '    Loop
+
+End Sub
+
+' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
+' Summary : Oracle接続テスト
+' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
+Public Sub TestOracleConnection()
+                            
+    ' Oracle接続
+    Call IDao_OpenConnection
+    
+    MsgBox "Oracle接続テスト 成功"
 
 End Sub

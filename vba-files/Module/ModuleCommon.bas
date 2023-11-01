@@ -8,13 +8,13 @@ Option Explicit
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 ' Summary : Oracle接続テスト
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-Public Sub TestOpenConnectionOracleOra()
+Public Sub TestOracleConnection()
         
     Dim conf As New Config
-    Dim repo As New Repository
+    Dim dao As New DaoOracleOra
     
-    Call repo.InitOracleOra(conf.Item("ORA_DATA_SOURCE"), conf.Item("ORA_USER_ID"), conf.Item("ORA_PASSWORD"))
-    Call repo.TestOpenConnectionOracleOra
+    Call dao.Init(conf.Item("ORA_DATA_SOURCE"), conf.Item("ORA_USER_ID"), conf.Item("ORA_PASSWORD"))
+    Call dao.TestOracleConnection
 
 End Sub
 
@@ -24,9 +24,14 @@ End Sub
 Public Sub ExecuteSelectSqls()
         
     Dim conf As New Config
-    Dim repo As New Repository
     
-    Call repo.InitOracleOra(conf.Item("ORA_DATA_SOURCE"), conf.Item("ORA_USER_ID"), conf.Item("ORA_PASSWORD"))
+    ' ---- Oracle以外のDBに接続する時は下記のDaoを変更 ---- '
+    Dim dao As New DaoOracleOra
+    Call dao.Init(conf.Item("ORA_DATA_SOURCE"), conf.Item("ORA_USER_ID"), conf.Item("ORA_PASSWORD"))
+    ' ----------------------------------------------------- '
+    
+    Dim repo As New Repository
+    Call repo.Init(dao)
     Call repo.ExecuteSelectSqls
 
 End Sub
