@@ -24,7 +24,7 @@ Public Property Let ListObject(ByRef lo As ListObject)
 End Property
 
 Public Property Get ListObject() As ListObject
-    ListObject = listObject_
+    Set ListObject = listObject_
 End Property
 
 
