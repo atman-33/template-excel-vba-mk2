@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "TableSample"
+Attribute VB_Name = "Table_Sample"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -10,17 +10,12 @@ Attribute VB_Exposed = False
 Option Explicit
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-' クラス：TableSample
+' クラス：Table_Sample
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 
 ' ---- 定数設定 ---- '
 Const SHEET_NAME = "Sample1"
 Const TABLE_NAME = "SampleTable_tbl"
-
-Const COL_ID = "ID"
-Const COL_TEXT = "TEXT"
-Const COL_VALUE = "VALUE"
-Const COL_CREATED_AT = "CREATED_AT"
 
 ' DBテーブル名
 Const DB_TABLE = "SAMPLE_TBL"
@@ -36,6 +31,7 @@ Const DELETE_COL_NAME = "削除"
 
 Private listObject_ As ListObject
 Private repository_ As Repository
+Private base_ As TableBase
 
 Private dbKeyCols As Collection
 Private dbUpdateCols As Collection
@@ -51,8 +47,12 @@ Private Sub Class_Initialize()
     ' テーブル設定
     Set listObject_ = ThisWorkbook.Worksheets(SHEET_NAME).ListObjects(TABLE_NAME)
     
+    ' ベースクラス設定
+    Set base_ = New TableBase
+    Call base_.Init(listObject_)
+    
     ' DAO設定
-    Dim dao As New DaoOracleOra
+    Dim dao As New Dao_OracleOra
     Call dao.Init(conf.Item("ORA_DATA_SOURCE"), conf.Item("ORA_USER_ID"), conf.Item("ORA_PASSWORD"))
     
     ' リポジトリ設定
@@ -79,57 +79,24 @@ Private Sub Class_Initialize()
 End Sub
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
+' Summary : ListObjectプロパティ
+' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
+Public Property Get ListObject() As ListObject
+    Set ListObject = listObject_
+End Property
+
+' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
+' Summary : TableBaseプロパティ
+' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
+Public Property Get Base() As TableBase
+    Set Base = base_
+End Property
+
+' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 ' Summary : データ取得
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Public Sub LoadData()
     Call repository_.ExecuteSelectSql(TABLE_NAME)
-End Sub
-
-' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-' Summary : 昇順にソート
-' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-Public Sub OrderBy(varColumn As String)
-    
-    Dim exTable As New ExListObject
-    exTable.ListObject = listObject_
-    
-    Call exTable.OrderBy(varColumn)
-
-End Sub
-
-' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-' Summary : 降順にソート
-' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-Public Sub OrderByDescending(varColumn As String)
-    
-    Dim exTable As New ExListObject
-    exTable.ListObject = listObject_
-    
-    Call exTable.OrderByDescending(varColumn)
-
-End Sub
-
-
-' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-' Summary : テーブルをフィルター
-' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-Public Sub Filter(varColumn As String, keywords As Collection)
-    
-    Dim exTable As New ExListObject
-    exTable.ListObject = listObject_
-    
-    Call exTable.Filter(varColumn, keywords)
-End Sub
-
-' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-' Summary : テーブルのフィルターを解除
-' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-Public Sub FilterClear()
-    
-    Dim exTable As New ExListObject
-    exTable.ListObject = listObject_
-        
-    Call exTable.FilterClear
 End Sub
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
@@ -184,7 +151,6 @@ Public Sub SaveOrDeleteOne(ByVal Target As Range, Cancel As Boolean)
         
         Cancel = True ' アクティブを解除
         
-
         ' ダイアログを表示
         Dim response As VbMsgBoxResult
         response = MsgBox("クリックしたレコードを削除しますか？", vbQuestion + vbYesNo, "削除の確認")

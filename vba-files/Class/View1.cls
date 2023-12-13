@@ -22,7 +22,7 @@ End Sub
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Private Sub GetDataButton_Click()
 
-    Dim tableCls As New TableSample
+    Dim tableCls As New Table_Sample
     Call tableCls.LoadData
     
     MsgBox "データを更新しました。"
@@ -35,8 +35,8 @@ End Sub
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Private Sub SampleIdOrderByButton_Click()
 
-    Dim tableCls As New TableSample
-    Call tableCls.OrderBy("ID")
+    Dim tableCls As New Table_Sample
+    Call tableCls.Base.OrderBy("ID")
 
 End Sub
 
@@ -46,8 +46,8 @@ End Sub
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Private Sub SampleIdOrderByDescendingButton_Click()
 
-    Dim tableCls As New TableSample
-    Call tableCls.OrderByDescending("ID")
+    Dim tableCls As New Table_Sample
+    Call tableCls.Base.OrderByDescending("ID")
 
 End Sub
 
@@ -63,8 +63,8 @@ Private Sub FilterButton_Click()
     keywords.Add ("aaa")
     keywords.Add ("ccc")
 
-    Dim tableCls As New TableSample
-    Call tableCls.Filter("TEXT", keywords)
+    Dim tableCls As New Table_Sample
+    Call tableCls.Base.Filter("TEXT", keywords)
     
 End Sub
 
@@ -74,8 +74,8 @@ End Sub
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Private Sub FilterClearButton_Click()
 
-    Dim tableCls As New TableSample
-    Call tableCls.FilterClear
+    Dim tableCls As New Table_Sample
+    Call tableCls.Base.FilterClear
 
 End Sub
 
@@ -84,7 +84,7 @@ End Sub
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Private Sub SaveAllButton_Click()
 
-    Dim tableCls As New TableSample
+    Dim tableCls As New Table_Sample
     Call tableCls.SaveAll
     
     MsgBox "全レコードのデータを保存しました。"
@@ -99,7 +99,7 @@ Private Sub Worksheet_BeforeDoubleClick(ByVal Target As Range, Cancel As Boolean
 
     Debug.Print "Double Clicked!"
     
-    Dim tableCls As New TableSample
+    Dim tableCls As New Table_Sample
     Call tableCls.SaveOrDeleteOne(Target, Cancel)
 
 End Sub

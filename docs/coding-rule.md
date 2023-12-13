@@ -5,8 +5,8 @@
 #### 定数	
 - 大文字のスネークケース	
 
-ex: 
-```
+e.g. : 
+```txt
 CONFIG_SHEET
 ```
 
@@ -17,8 +17,8 @@ CONFIG_SHEET
 > 既に指定済みのプロパティやメソッド名も変更されてしまうため注意。
 > その場合は、var を付けて別名にする。
 
-ex:
-```
+e.g. :
+```txt
 tableName
 varItem
 ```
@@ -26,7 +26,7 @@ varItem
 #### メソッド	
 - パスカルケース	
 
-ex:
+e.g. :
 ```
 InitConfig
 ```
@@ -34,36 +34,44 @@ InitConfig
 ### 標準モジュール関連
 
 #### モジュール名称
-- Module+○○	
+- Module + _ + ○○	
 
-ex:
-```
-ModuleCommon
-ModuleMain
+e.g. :
+```txt
+Module_Common
+Module_Main
 ```
 
 ### クラスモジュール関連
 
-#### クラスのフィールド	
-- キャメルケース + _(アンダーバー)	
+類似した意味を持つクラスは、`_`で区切ってグルーピングする。
 
-ex:
+e.g. :  
+```txt
+Table_oo
+Sheet_oo
 ```
-tableName_
+
+#### クラスのフィールド	
+- キャメルケース
+
+e.g. :  
+```txt
+tableName
 ```
 
 #### DB接続クラス	
-- Dao+○○	
+- Dao + _ + ○○	
 
-ex:
-```
-DaoOracleOra
+e.g. :  
+```txt
+Dao_OracleOra
 ```
 
-#### 既存クラス拡張クラス	
-- Ex+○○	
+#### ベースクラス	
+- oo + Base	
 
-ex: 
-```
-ExListObject
+e.g. : 
+```txt
+TableBase
 ```
