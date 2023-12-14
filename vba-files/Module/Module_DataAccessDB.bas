@@ -1,4 +1,4 @@
-Attribute VB_Name = "Module_DataAccess"
+Attribute VB_Name = "Module_DataAccessDB"
 Option Explicit
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----

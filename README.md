@@ -11,7 +11,7 @@
 ```text
 |- 標準モジュール/
 |   |- Constants            : 共通の定数を記載
-|   |- Module_DataAccess    : Staticな共通処理を記載
+|   |- Module_DataAccessDB  : DB操作を行う一般処理
 |   |- Tests                : ユニットテスト用コード置き場
 |   |- Utils                : 汎用メソッド置き場
 |
