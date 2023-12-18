@@ -9,13 +9,6 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Option Explicit
 
-Private Const SHEET_NAME = "Sample1"
-Private Const TABLE_NAME = "sample1_tbl1"
-
-Private Sub CommandButton1_Click()
-    MsgBox "test"
-End Sub
-
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 ' Summary : 各テーブルのデータを更新
 ' Note  :

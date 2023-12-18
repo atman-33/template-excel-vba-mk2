@@ -23,14 +23,14 @@ Const SQL_COL_SQL = "SQL"
 ' ------------------ '
 
 ' DAO
-Private dao_ As IDao
+Private m_dao As IDao
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 ' Summary : 初期化
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Public Sub Init(dao As IDao)
     
-    Set dao_ = dao
+    Set m_dao = dao
         
 End Sub
 
@@ -41,7 +41,7 @@ End Sub
 Public Sub ExecuteSelectSqls()
                     
     ' DB接続
-    Call dao_.OpenConnection
+    Call m_dao.OpenConnection
     
     ' SQLテーブルを格納
     Dim table As ListObject
@@ -66,16 +66,16 @@ Public Sub ExecuteSelectSqls()
         Set sqlTable = ThisWorkbook.Worksheets(sheet).ListObjects(sheetTable)
         
         ' クエリ実行
-        Call dao_.Query(sql)
-        Call dao_.PasteRecordsetToTable(sqlTable)
+        Call m_dao.Query(sql)
+        Call m_dao.PasteRecordsetToTable(sqlTable)
         
         ' レコードセットを切断
-        Call dao_.CloseRecordset
+        Call m_dao.CloseRecordset
     
     Next i
         
     ' Oracle切断
-    Call dao_.CloseConnection
+    Call m_dao.CloseConnection
 
 End Sub
 
@@ -85,7 +85,7 @@ End Sub
 Public Sub ExecuteSelectSql(tableName As String)
                     
     ' DB接続
-    Call dao_.OpenConnection
+    Call m_dao.OpenConnection
     
     ' SQLテーブルを格納
     Dim table As ListObject
@@ -114,18 +114,18 @@ Public Sub ExecuteSelectSql(tableName As String)
             Set sqlTable = ThisWorkbook.Worksheets(sheet).ListObjects(sheetTable)
             
             ' クエリ実行
-            Call dao_.Query(sql)
-            Call dao_.PasteRecordsetToTable(sqlTable)
+            Call m_dao.Query(sql)
+            Call m_dao.PasteRecordsetToTable(sqlTable)
             
             ' レコードセットを切断
-            Call dao_.CloseRecordset
+            Call m_dao.CloseRecordset
             
         End If
     
     Next i
         
     ' Oracle切断
-    Call dao_.CloseConnection
+    Call m_dao.CloseConnection
 
 End Sub
 
@@ -136,11 +136,11 @@ Public Sub SaveRecords(table As ListObject, dbTable As String, _
                        keyColumns As Collection, updateColumns As Collection)
                         
     ' DB接続
-    Call dao_.OpenConnection
+    Call m_dao.OpenConnection
     
     Dim i As Long
     For i = 1 To table.ListRows.Count
-        Call dao_.SaveRecord(table, i, dbTable, keyColumns, updateColumns)
+        Call m_dao.SaveRecord(table, i, dbTable, keyColumns, updateColumns)
     Next
 
 End Sub
@@ -152,8 +152,8 @@ Public Sub SaveRecord(table As ListObject, rowIndex As Long, dbTable As String, 
                        keyColumns As Collection, updateColumns As Collection)
     
     ' DB接続
-    Call dao_.OpenConnection
-    Call dao_.SaveRecord(table, rowIndex, dbTable, keyColumns, updateColumns)
+    Call m_dao.OpenConnection
+    Call m_dao.SaveRecord(table, rowIndex, dbTable, keyColumns, updateColumns)
 
 End Sub
 
@@ -164,8 +164,8 @@ Public Sub DeleteRecord(table As ListObject, rowIndex As Long, dbTable As String
                         keyColumns As Collection)
     
     ' DB接続
-    Call dao_.OpenConnection
-    Call dao_.DeleteRecord(table, rowIndex, dbTable, keyColumns)
+    Call m_dao.OpenConnection
+    Call m_dao.DeleteRecord(table, rowIndex, dbTable, keyColumns)
 
 End Sub
 

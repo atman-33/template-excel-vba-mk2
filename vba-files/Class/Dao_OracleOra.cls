@@ -15,21 +15,21 @@ Implements IDao
 ' クラス：Dao_OracleOra
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 
-Private connection_ As Object    ' Connection
-Private recordset_ As Object     ' Recordset
+Private m_connection As Object    ' Connection
+Private m_recordset As Object     ' Recordset
 
 ' Oracle接続情報
-Private ora_data_source_ As String
-Private ora_user_id_ As String
-Private ora_password_ As String
+Private m_oraDataSource As String
+Private m_oraUserId As String
+Private m_oraPassword As String
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 ' Summary : コンストラクタ
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Private Sub Class_Initialize()
     
-    Set connection_ = CreateObject("Adodb.Connection")
-    Set recordset_ = CreateObject("Adodb.Recordset")
+    Set m_connection = CreateObject("Adodb.Connection")
+    Set m_recordset = CreateObject("Adodb.Recordset")
     
 End Sub
 
@@ -38,9 +38,9 @@ End Sub
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Public Sub Init(dataSource As String, username As String, password As String)
     
-    ora_data_source_ = dataSource
-    ora_user_id_ = username
-    ora_password_ = password
+    m_oraDataSource = dataSource
+    m_oraUserId = username
+    m_oraPassword = password
     
 End Sub
 
@@ -52,13 +52,13 @@ Public Sub IDao_OpenConnection()
     Dim constr As String
     
     constr = "Provider=" & "OraOLEDB.Oracle" _
-                & ";Data Source=" & ora_data_source_ _
-                & ";User ID=" & ora_user_id_ _
-                & ";Password=" & ora_password_ & ";"
+                & ";Data Source=" & m_oraDataSource _
+                & ";User ID=" & m_oraUserId _
+                & ";Password=" & m_oraPassword & ";"
     
     Debug.Print (constr)
-    connection_.ConnectionString = constr
-    connection_.Open
+    m_connection.ConnectionString = constr
+    m_connection.Open
     Debug.Print "オラクルへの接続完了"
     
 End Sub
@@ -68,7 +68,7 @@ End Sub
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Public Sub BeginTrans()
 
-    connection_.BeginTrans
+    m_connection.BeginTrans
     Debug.Print "トランザクション開始"
     
 End Sub
@@ -78,7 +78,7 @@ End Sub
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Public Sub CommitTrans()
     
-    connection_.CommitTrans
+    m_connection.CommitTrans
     Debug.Print "コミット処理実施"
 
 End Sub
@@ -88,7 +88,7 @@ End Sub
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Public Sub RollbackTrans()
     
-    connection_.RollbackTrans
+    m_connection.RollbackTrans
     Debug.Print "ロールバック処理実施"
 
 End Sub
@@ -100,11 +100,11 @@ Public Sub IDao_CloseConnection()
 
     On Error Resume Next
 
-    connection_.Close
-    recordset_.Close
+    m_connection.Close
+    m_recordset.Close
     
-    Set connection_ = Nothing
-    Set recordset_ = Nothing
+    Set m_connection = Nothing
+    Set m_recordset = Nothing
     
     On Error GoTo 0     ' エラー処理の命令取り消し
     Debug.Print "DBへの切断完了"
@@ -117,7 +117,7 @@ End Sub
 '           （連続でSQLを実行してレコードセットをOpenすることはできない）
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Public Sub IDao_CloseRecordset()
-    recordset_.Close
+    m_recordset.Close
 End Sub
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
@@ -127,7 +127,7 @@ End Sub
 Public Sub IDao_Query(sql As String)
         
     Debug.Print sql & " を実行"
-    recordset_.Open sql, connection_
+    m_recordset.Open sql, m_connection
     
 End Sub
 
@@ -144,7 +144,7 @@ Public Function IDao_Execute(sql As String) As Long
 On Error GoTo ErrorHandler
 
     Debug.Print sql & " を実行"
-    connection_.Execute sql, recordsAffected
+    m_connection.Execute sql, recordsAffected
     Call CommitTrans
     
     'Finally:へ飛ぶ
@@ -341,8 +341,8 @@ Public Sub PasteRecordset(sheet As Worksheet, startRow As Long, startCol As Long
     If filedsExists = True Then
 
         ' フィールド名の書き出し
-        For i = 0 To recordset_.Fields.Count - 1
-            sheet.Cells(startRow, startCol + i).Value = recordset_.Fields(i).name
+        For i = 0 To m_recordset.Fields.Count - 1
+            sheet.Cells(startRow, startCol + i).Value = m_recordset.Fields(i).name
         Next i
         
         startRow = startRow + 1
@@ -350,7 +350,7 @@ Public Sub PasteRecordset(sheet As Worksheet, startRow As Long, startCol As Long
     End If
     
     ' CopyFromRecordsetメソッドで基準セルを指定してデータの書き出し
-    sheet.Cells(startRow, startCol).CopyFromRecordset recordset_
+    sheet.Cells(startRow, startCol).CopyFromRecordset m_recordset
     
 End Sub
 
@@ -371,12 +371,12 @@ Public Sub IDao_PasteRecordsetToTable(table As ListObject)
     startCol = table.Range.Cells(1, 1).Column
 
     ' フィールド名の書き出し
-    For i = 0 To recordset_.Fields.Count - 1
-        table.Range.Cells(1, 1 + i).Value = recordset_.Fields(i).name
+    For i = 0 To m_recordset.Fields.Count - 1
+        table.Range.Cells(1, 1 + i).Value = m_recordset.Fields(i).name
     Next i
         
     ' テーブルにデータを貼り付け
-    table.Range.Cells(2, 1).CopyFromRecordset recordset_
+    table.Range.Cells(2, 1).CopyFromRecordset m_recordset
         
     ' ---- 下記は、利用しないソースコード ----
         
@@ -384,17 +384,17 @@ Public Sub IDao_PasteRecordsetToTable(table As ListObject)
 '    table.ListRows.Add      ' 空テーブルはエラーになるため1行追加
     
     ' 利用しない①：CopyFromRecordsetはセル書式が変更されるため使わない
-'    table.DataBodyRange.CopyFromRecordset recordset_
+'    table.DataBodyRange.CopyFromRecordset m_recordset
     
     ' 利用しない②：セル書式は変更されないが、レコード数が多いと処理が遅い
 '    Dim x As Long, y As Long
 '    y = 2
-'    Do Until recordset_.EOF
-'        For x = 1 To recordset_.Fields.Count
-'            table.Range.Cells(y, x).Value = recordset_.Fields(x - 1).Value
+'    Do Until m_recordset.EOF
+'        For x = 1 To m_recordset.Fields.Count
+'            table.Range.Cells(y, x).Value = m_recordset.Fields(x - 1).Value
 '        Next
 '        y = y + 1
-'        recordset_.MoveNext
+'        m_recordset.MoveNext
 '    Loop
 
 End Sub

@@ -29,12 +29,12 @@ Const SAVE_COL_NAME = "保存"
 Const DELETE_COL_NAME = "削除"
 ' ------------------ '
 
-Private listObject_ As ListObject
-Private repository_ As Repository
-Private base_ As TableBase
+Private m_listObject As ListObject
+Private m_repository As Repository
+Private m_base As TableBase
 
-Private dbKeyCols As Collection
-Private dbUpdateCols As Collection
+Private m_dbKeyCols As Collection
+Private m_dbUpdateCols As Collection
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 ' Summary : コンストラクタ
@@ -45,35 +45,35 @@ Private Sub Class_Initialize()
     Dim conf As New Config
         
     ' テーブル設定
-    Set listObject_ = ThisWorkbook.Worksheets(SHEET_NAME).ListObjects(TABLE_NAME)
+    Set m_listObject = ThisWorkbook.Worksheets(SHEET_NAME).ListObjects(TABLE_NAME)
     
     ' ベースクラス設定
-    Set base_ = New TableBase
-    Call base_.Init(listObject_)
+    Set m_base = New TableBase
+    Call m_base.Init(m_listObject)
     
     ' DAO設定
     Dim dao As New Dao_OracleOra
     Call dao.Init(conf.Item("ORA_DATA_SOURCE"), conf.Item("ORA_USER_ID"), conf.Item("ORA_PASSWORD"))
     
     ' リポジトリ設定
-    Set repository_ = New Repository
-    Call repository_.Init(dao)
+    Set m_repository = New Repository
+    Call m_repository.Init(dao)
     
     ' DB CRUD処理用コレクション設定
     Dim varItem As Variant
     
     ' キーカラムを格納（配列をコレクションに変換）
-    Set dbKeyCols = New Collection
+    Set m_dbKeyCols = New Collection
     Dim keyColArray As Variant: keyColArray = Split(DB_KEY_COLS, ",")
         For Each varItem In keyColArray
-        Call dbKeyCols.Add(varItem)
+        Call m_dbKeyCols.Add(varItem)
     Next
 
     ' キーでないカラムを格納（配列をコレクションに変換）
-    Set dbUpdateCols = New Collection
+    Set m_dbUpdateCols = New Collection
     Dim updateColArray As Variant: updateColArray = Split(DB_UPDATE_COLS, ",")
     For Each varItem In updateColArray
-        Call dbUpdateCols.Add(varItem)
+        Call m_dbUpdateCols.Add(varItem)
     Next
     
 End Sub
@@ -82,21 +82,21 @@ End Sub
 ' Summary : ListObjectプロパティ
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Public Property Get ListObject() As ListObject
-    Set ListObject = listObject_
+    Set ListObject = m_listObject
 End Property
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 ' Summary : TableBaseプロパティ
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Public Property Get Base() As TableBase
-    Set Base = base_
+    Set Base = m_base
 End Property
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 ' Summary : データ取得
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Public Sub LoadData()
-    Call repository_.ExecuteSelectSql(TABLE_NAME)
+    Call m_repository.ExecuteSelectSql(TABLE_NAME)
 End Sub
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
@@ -109,7 +109,7 @@ Public Sub SaveAll()
     Dim keyCols As New Collection
     Dim updateCols As New Collection
             
-    Call repository_.SaveRecords(listObject_, DB_TABLE, dbKeyCols, dbUpdateCols)
+    Call m_repository.SaveRecords(m_listObject, DB_TABLE, m_dbKeyCols, m_dbUpdateCols)
     
 End Sub
 
@@ -120,23 +120,23 @@ Public Sub SaveOrDeleteOne(ByVal Target As Range, Cancel As Boolean)
     
     ' 行インデックスを取得
     Dim indexRow As Long
-    indexRow = ActiveCell.Row - listObject_.DataBodyRange(1).Row + 1
+    indexRow = ActiveCell.Row - m_listObject.DataBodyRange(1).Row + 1
     
     ' 見出し行、集計行の選択チェック
-    If indexRow = 0 Or listObject_.ListRows.Count < indexRow Then Exit Sub
+    If indexRow = 0 Or m_listObject.ListRows.Count < indexRow Then Exit Sub
     
     Dim keyCols As New Collection
     Dim updateCols As New Collection
     
     ' ---- 1レコードのデータを保存 ----
     Dim saveRange As Range
-    Set saveRange = listObject_.ListColumns(SAVE_COL_NAME).DataBodyRange
+    Set saveRange = m_listObject.ListColumns(SAVE_COL_NAME).DataBodyRange
 
     If Not Intersect(Target, saveRange) Is Nothing Then '対象範囲と重なるところが「なし」ではない場合
         
         Cancel = True ' アクティブを解除
             
-        Call repository_.SaveRecord(listObject_, indexRow, DB_TABLE, dbKeyCols, dbUpdateCols)
+        Call m_repository.SaveRecord(m_listObject, indexRow, DB_TABLE, m_dbKeyCols, m_dbUpdateCols)
                 
         MsgBox "クリックしたレコードのデータを保存しました。"
         Exit Sub
@@ -145,7 +145,7 @@ Public Sub SaveOrDeleteOne(ByVal Target As Range, Cancel As Boolean)
     
     ' ---- 1レコードのデータを削除 ----
     Dim deleteRange As Range
-    Set deleteRange = listObject_.ListColumns(DELETE_COL_NAME).DataBodyRange
+    Set deleteRange = m_listObject.ListColumns(DELETE_COL_NAME).DataBodyRange
     
     If Not Intersect(Target, deleteRange) Is Nothing Then '対象範囲と重なるところが「なし」ではない場合
         
@@ -161,8 +161,8 @@ Public Sub SaveOrDeleteOne(ByVal Target As Range, Cancel As Boolean)
             Exit Sub
         End If
                         
-        Call repository_.DeleteRecord(listObject_, indexRow, DB_TABLE, dbKeyCols)
-        Call repository_.ExecuteSelectSql(TABLE_NAME)
+        Call m_repository.DeleteRecord(m_listObject, indexRow, DB_TABLE, m_dbKeyCols)
+        Call m_repository.ExecuteSelectSql(TABLE_NAME)
         
         MsgBox "クリックしたレコードのデータを削除しました。"
         Exit Sub

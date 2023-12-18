@@ -13,24 +13,24 @@ Option Explicit
 ' クラス：TableBase
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 
-Private listObject_ As ListObject
+Private m_listObject As ListObject
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 ' Summary : 初期化
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Public Sub Init(lo As ListObject)
-    Set listObject_ = lo
+    Set m_listObject = lo
 End Sub
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 ' Summary : ListObjectプロパティ
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Public Property Let ListObject(ByRef lo As ListObject)
-    Set listObject_ = lo
+    Set m_listObject = lo
 End Property
 
 Public Property Get ListObject() As ListObject
-    Set ListObject = listObject_
+    Set ListObject = m_listObject
 End Property
 
 
@@ -39,7 +39,7 @@ End Property
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Public Sub OrderBy(colName As String)
 
-    listObject_.Range.Sort key1:=listObject_.ListColumns(colName).Range, order1:=xlAscending, Header:=xlYes
+    m_listObject.Range.Sort key1:=m_listObject.ListColumns(colName).Range, order1:=xlAscending, Header:=xlYes
     
 End Sub
 
@@ -48,7 +48,7 @@ End Sub
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Public Sub OrderByDescending(colName As String)
 
-    listObject_.Range.Sort key1:=listObject_.ListColumns(colName).Range, order1:=xlDescending, Header:=xlYes
+    m_listObject.Range.Sort key1:=m_listObject.ListColumns(colName).Range, order1:=xlDescending, Header:=xlYes
     
 End Sub
 
@@ -61,8 +61,8 @@ Public Sub Filter(colName As String, criterias As Collection)
     criteriasArray = CollectionToArray(criterias)
 
 
-    listObject_.Range.AutoFilter _
-        Field:=listObject_.ListColumns(colName).Index, _
+    m_listObject.Range.AutoFilter _
+        Field:=m_listObject.ListColumns(colName).Index, _
         Criteria1:=Array(criteriasArray), _
         Operator:=xlFilterValues
                 
@@ -74,10 +74,10 @@ End Sub
 Public Sub FilterClear()
 
     ' オートフィルタを解除
-    listObject_.ShowAutoFilter = False
+    m_listObject.ShowAutoFilter = False
     
     ' オートフィルタを設定
-    listObject_.ShowAutoFilter = True
+    m_listObject.ShowAutoFilter = True
     
 End Sub
 

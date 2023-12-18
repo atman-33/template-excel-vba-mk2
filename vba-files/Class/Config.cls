@@ -20,40 +20,38 @@ Const CONFIG_COL_KEY = "Key"
 Const CONFIG_COL_ITEM = "Item"
 ' ------------------ '
 
-Private dictionary_ As Object
+Private m_dictionary As Object
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 ' Summary : コンストラクタ
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Private Sub Class_Initialize()
     
-    Set dictionary_ = CreateObject("Scripting.Dictionary")
+    Set m_dictionary = CreateObject("Scripting.Dictionary")
     
     ' Configテーブルを格納
-    Dim table As ListObject
-    Set table = ThisWorkbook.Worksheets(CONFIG_SHEET).ListObjects(CONFIG_TABLE)
+    Dim varTable As ListObject
+    Set varTable = ThisWorkbook.Worksheets(CONFIG_SHEET).ListObjects(CONFIG_TABLE)
     
     ' ConfigテーブルのKeyとItemを辞書に格納
-    Dim key As String, Item As String
+    Dim varKey As String, varItem As String
     
     Dim i As Long
-    For i = 1 To table.ListRows.Count
-        key = table.ListColumns(CONFIG_COL_KEY).DataBodyRange(i).Value
-        Item = table.ListColumns(CONFIG_COL_ITEM).DataBodyRange(i).Value
+    For i = 1 To varTable.ListRows.Count
+        varKey = varTable.ListColumns(CONFIG_COL_KEY).DataBodyRange(i).Value
+        varItem = varTable.ListColumns(CONFIG_COL_ITEM).DataBodyRange(i).Value
     
-        Call dictionary_.Add(key, Item)
+        Call m_dictionary.Add(varKey, varItem)
     Next i
     
     ' ---- Debug ---- '
-    Dim varItem As Variant
-    Dim str As String
-    For Each varItem In dictionary_
-        str = str & varItem & ":" & dictionary_.Item(varItem) & vbCrLf
-    Next
-    
-    Debug.Print str
-'    Debug.Print dictionary_.Item("ORA_DATA_SOURCE")
-    
+'    Dim var As Variant
+'    Dim str As String
+'    For Each var In m_dictionary
+'        str = str & varItem & ":" & m_dictionary.Item(varItem) & vbCrLf
+'    Next
+'
+'    Debug.Print str
     ' --------------- '
     
 End Sub
@@ -63,6 +61,6 @@ End Sub
 ' Summary : 指定したKeyのアイテムを取得
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Public Property Get Item(key As String) As Variant
-    Item = dictionary_.Item(key)
+    Item = m_dictionary.Item(key)
 End Property
 
