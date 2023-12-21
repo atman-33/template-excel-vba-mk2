@@ -12,7 +12,7 @@ Option Explicit
 Implements IDao
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-' クラス：Dao_OracleOra
+' Class: Dao_OracleOra
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 
 Private m_connection As Object    ' Connection
@@ -27,10 +27,6 @@ Private m_oraPassword As String
 ' Summary : コンストラクタ
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Private Sub Class_Initialize()
-    
-    Set m_connection = CreateObject("Adodb.Connection")
-    Set m_recordset = CreateObject("Adodb.Recordset")
-    
 End Sub
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
@@ -48,6 +44,14 @@ End Sub
 ' Summary : オラクルへの接続処理
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Public Sub IDao_OpenConnection()
+
+    ' 既にConnectionが作成済みであれば処理を抜ける
+    If Not (m_connection Is Nothing) Then
+        Exit Sub
+    End If
+    
+    Set m_connection = CreateObject("Adodb.Connection")
+    Set m_recordset = CreateObject("Adodb.Recordset")
     
     Dim constr As String
     
@@ -98,6 +102,12 @@ End Sub
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Public Sub IDao_CloseConnection()
 
+    ' 既にConnectionが破棄済みであれば処理を抜ける
+    If m_connection Is Nothing Then
+        Exit Sub
+    End If
+
+    ' ---- エラー処理の命令取り消し ---- '
     On Error Resume Next
 
     m_connection.Close
@@ -106,7 +116,9 @@ Public Sub IDao_CloseConnection()
     Set m_connection = Nothing
     Set m_recordset = Nothing
     
-    On Error GoTo 0     ' エラー処理の命令取り消し
+    On Error GoTo 0
+    ' ---------------------------------- '
+    
     Debug.Print "DBへの切断完了"
 
 End Sub
@@ -377,25 +389,6 @@ Public Sub IDao_PasteRecordsetToTable(table As ListObject)
         
     ' テーブルにデータを貼り付け
     table.Range.Cells(2, 1).CopyFromRecordset m_recordset
-        
-    ' ---- 下記は、利用しないソースコード ----
-        
-    ' 下記の利用しない①、②用
-'    table.ListRows.Add      ' 空テーブルはエラーになるため1行追加
-    
-    ' 利用しない①：CopyFromRecordsetはセル書式が変更されるため使わない
-'    table.DataBodyRange.CopyFromRecordset m_recordset
-    
-    ' 利用しない②：セル書式は変更されないが、レコード数が多いと処理が遅い
-'    Dim x As Long, y As Long
-'    y = 2
-'    Do Until m_recordset.EOF
-'        For x = 1 To m_recordset.Fields.Count
-'            table.Range.Cells(y, x).Value = m_recordset.Fields(x - 1).Value
-'        Next
-'        y = y + 1
-'        m_recordset.MoveNext
-'    Loop
 
 End Sub
 
@@ -406,6 +399,7 @@ Public Sub TestOracleConnection()
                             
     ' Oracle接続
     Call IDao_OpenConnection
+    Call IDao_CloseConnection
     
     MsgBox "Oracle接続テスト 成功"
 

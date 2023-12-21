@@ -10,7 +10,7 @@ Attribute VB_Exposed = False
 Option Explicit
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-' クラス：Table_Sample
+' Class: Table_Sample
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 
 ' ---- 定数設定 ---- '
@@ -95,28 +95,25 @@ End Property
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 ' Summary : データ取得
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-Public Sub LoadData()
-    Call m_repository.ExecuteSelectSql(TABLE_NAME)
+Public Sub LoadData(varRepository As Repository)
+
+    Call varRepository.ExecuteSelectSql(TABLE_NAME)
+
 End Sub
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 ' Summary : テーブルの全データを保存
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-Public Sub SaveAll()
-
-    Dim varItem As Variant
-
-    Dim keyCols As New Collection
-    Dim updateCols As New Collection
+Public Sub SaveAll(varRepository As Repository)
             
-    Call m_repository.SaveRecords(m_listObject, DB_TABLE, m_dbKeyCols, m_dbUpdateCols)
+    Call varRepository.SaveRecords(m_listObject, DB_TABLE, m_dbKeyCols, m_dbUpdateCols)
     
 End Sub
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 ' Summary : 1レコードのデータ保存もしくは削除
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-Public Sub SaveOrDeleteOne(ByVal Target As Range, Cancel As Boolean)
+Public Sub SaveOrDeleteOne(ByVal Target As Range, Cancel As Boolean, varRepository As Repository)
     
     ' 行インデックスを取得
     Dim indexRow As Long
@@ -136,7 +133,7 @@ Public Sub SaveOrDeleteOne(ByVal Target As Range, Cancel As Boolean)
         
         Cancel = True ' アクティブを解除
             
-        Call m_repository.SaveRecord(m_listObject, indexRow, DB_TABLE, m_dbKeyCols, m_dbUpdateCols)
+        Call varRepository.SaveRecord(m_listObject, indexRow, DB_TABLE, m_dbKeyCols, m_dbUpdateCols)
                 
         MsgBox "クリックしたレコードのデータを保存しました。"
         Exit Sub
@@ -161,8 +158,8 @@ Public Sub SaveOrDeleteOne(ByVal Target As Range, Cancel As Boolean)
             Exit Sub
         End If
                         
-        Call m_repository.DeleteRecord(m_listObject, indexRow, DB_TABLE, m_dbKeyCols)
-        Call m_repository.ExecuteSelectSql(TABLE_NAME)
+        Call varRepository.DeleteRecord(m_listObject, indexRow, DB_TABLE, m_dbKeyCols)
+        Call varRepository.ExecuteSelectSql(TABLE_NAME)
         
         MsgBox "クリックしたレコードのデータを削除しました。"
         Exit Sub

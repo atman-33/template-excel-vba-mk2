@@ -2,7 +2,7 @@ Attribute VB_Name = "Module_DataAccessDB"
 Option Explicit
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-' データアクセスモジュール
+' 汎用DBアクセスモジュール
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
@@ -10,10 +10,9 @@ Option Explicit
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Public Sub TestOracleConnection()
         
-    Dim conf As New Config
     Dim dao As New Dao_OracleOra
     
-    Call dao.Init(conf.Item("ORA_DATA_SOURCE"), conf.Item("ORA_USER_ID"), conf.Item("ORA_PASSWORD"))
+    Call dao.Init(glb_Config.Item("ORA_DATA_SOURCE"), glb_Config.Item("ORA_USER_ID"), glb_Config.Item("ORA_PASSWORD"))
     Call dao.TestOracleConnection
 
 End Sub
@@ -21,18 +20,14 @@ End Sub
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 ' Summary : SQLテーブルのSQLを全て実行
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-Public Sub ExecuteSelectSqls()
-        
-    Dim conf As New Config
+Public Sub TestExecuteSqls()
+            
+    Dim repo As Repository
+    Set repo = glb_Factory.CreateRepository
     
-    ' ---- Oracle以外のDBに接続する時は下記のDaoを変更 ---- '
-    Dim dao As New Dao_OracleOra
-    Call dao.Init(conf.Item("ORA_DATA_SOURCE"), conf.Item("ORA_USER_ID"), conf.Item("ORA_PASSWORD"))
-    ' ----------------------------------------------------- '
-    
-    Dim repo As New Repository
-    Call repo.Init(dao)
+    Call repo.OpenConnection
     Call repo.ExecuteSelectSqls
+    Call repo.CloseConnection
 
 End Sub
 

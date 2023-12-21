@@ -9,10 +9,10 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
 
-Implements IDao
+' Implements IDao
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-' ÉNÉâÉXÅFDao_Access
+' Class: Dao_Access
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 
 ' ñ¢çÏê¨

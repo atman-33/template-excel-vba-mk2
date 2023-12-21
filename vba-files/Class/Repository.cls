@@ -10,7 +10,9 @@ Attribute VB_Exposed = False
 Option Explicit
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-' クラス：Repository
+' Class: Repository
+'
+' - DAOのオープン/クローズは、Repositoryクラスから実施すること
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 
 ' ---- 定数設定 ---- '
@@ -34,15 +36,29 @@ Public Sub Init(dao As IDao)
         
 End Sub
 
+' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
+' Summary : 接続オープン
+' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
+Public Sub OpenConnection()
+
+    Call m_dao.OpenConnection
+
+End Sub
+
+' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
+' Summary : 接続クローズ
+' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
+Public Sub CloseConnection()
+
+    Call m_dao.CloseConnection
+
+End Sub
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 ' Summary : シートに登録されている各SELECT文を実行
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Public Sub ExecuteSelectSqls()
-                    
-    ' DB接続
-    Call m_dao.OpenConnection
-    
+                        
     ' SQLテーブルを格納
     Dim table As ListObject
     Set table = ThisWorkbook.Worksheets(SQL_SHEET).ListObjects(SQL_TABLE)
@@ -74,19 +90,13 @@ Public Sub ExecuteSelectSqls()
     
     Next i
         
-    ' Oracle切断
-    Call m_dao.CloseConnection
-
 End Sub
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 ' Summary : シートに登録されているSELECT文を実行
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Public Sub ExecuteSelectSql(tableName As String)
-                    
-    ' DB接続
-    Call m_dao.OpenConnection
-    
+                        
     ' SQLテーブルを格納
     Dim table As ListObject
     Set table = ThisWorkbook.Worksheets(SQL_SHEET).ListObjects(SQL_TABLE)
@@ -124,9 +134,6 @@ Public Sub ExecuteSelectSql(tableName As String)
     
     Next i
         
-    ' Oracle切断
-    Call m_dao.CloseConnection
-
 End Sub
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
@@ -134,10 +141,7 @@ End Sub
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Public Sub SaveRecords(table As ListObject, dbTable As String, _
                        keyColumns As Collection, updateColumns As Collection)
-                        
-    ' DB接続
-    Call m_dao.OpenConnection
-    
+                            
     Dim i As Long
     For i = 1 To table.ListRows.Count
         Call m_dao.SaveRecord(table, i, dbTable, keyColumns, updateColumns)
@@ -151,8 +155,6 @@ End Sub
 Public Sub SaveRecord(table As ListObject, rowIndex As Long, dbTable As String, _
                        keyColumns As Collection, updateColumns As Collection)
     
-    ' DB接続
-    Call m_dao.OpenConnection
     Call m_dao.SaveRecord(table, rowIndex, dbTable, keyColumns, updateColumns)
 
 End Sub
@@ -163,8 +165,6 @@ End Sub
 Public Sub DeleteRecord(table As ListObject, rowIndex As Long, dbTable As String, _
                         keyColumns As Collection)
     
-    ' DB接続
-    Call m_dao.OpenConnection
     Call m_dao.DeleteRecord(table, rowIndex, dbTable, keyColumns)
 
 End Sub

@@ -10,7 +10,7 @@ Attribute VB_Exposed = False
 Option Explicit
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-' ÉNÉâÉXÅFTableBase
+' Class: TableBase
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 
 Private m_listObject As ListObject

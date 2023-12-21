@@ -9,14 +9,28 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Option Explicit
 
+Private m_sampleTable As Table_Sample
+Private m_repository As Repository
+
+' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
+' Summary : 初期化
+' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
+Private Sub Init()
+
+    Set m_sampleTable = glb_Factory.CreateSampleTable
+    Set m_repository = glb_Factory.CreateRepository
+
+End Sub
+
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 ' Summary : 各テーブルのデータを更新
-' Note  :
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Private Sub GetDataButton_Click()
 
-    Dim tableCls As New Table_Sample
-    Call tableCls.LoadData
+    Call Init
+    Call m_repository.OpenConnection
+    Call m_sampleTable.LoadData(m_repository)
+    Call m_repository.CloseConnection
     
     MsgBox "データを更新しました。"
 
@@ -24,31 +38,30 @@ End Sub
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 ' Summary : 昇順に並び替え
-' Note  :
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Private Sub SampleIdOrderByButton_Click()
 
-    Dim tableCls As New Table_Sample
-    Call tableCls.Base.OrderBy("ID")
+    Call Init
+    Call m_sampleTable.Base.OrderBy("ID")
 
 End Sub
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 ' Summary : 降順に並び替え
-' Note  :
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Private Sub SampleIdOrderByDescendingButton_Click()
 
-    Dim tableCls As New Table_Sample
-    Call tableCls.Base.OrderByDescending("ID")
+    Call Init
+    Call m_sampleTable.Base.OrderByDescending("ID")
 
 End Sub
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 ' Summary : テーブルをフィルター
-' Note  :
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Private Sub FilterButton_Click()
+
+    Call Init
 
     Dim keywords As Collection
     Set keywords = New Collection
@@ -56,19 +69,17 @@ Private Sub FilterButton_Click()
     keywords.Add ("aaa")
     keywords.Add ("ccc")
 
-    Dim tableCls As New Table_Sample
-    Call tableCls.Base.Filter("TEXT", keywords)
+    Call m_sampleTable.Base.Filter("TEXT", keywords)
     
 End Sub
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 ' Summary : テーブルのフィルターを解除
-' Note  :
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Private Sub FilterClearButton_Click()
 
-    Dim tableCls As New Table_Sample
-    Call tableCls.Base.FilterClear
+    Call Init
+    Call m_sampleTable.Base.FilterClear
 
 End Sub
 
@@ -77,8 +88,10 @@ End Sub
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Private Sub SaveAllButton_Click()
 
-    Dim tableCls As New Table_Sample
-    Call tableCls.SaveAll
+    Call Init
+    Call m_repository.OpenConnection
+    Call m_sampleTable.SaveAll(m_repository)
+    Call m_repository.CloseConnection
     
     MsgBox "全レコードのデータを保存しました。"
 
@@ -86,14 +99,16 @@ End Sub
 
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 ' Summary : 1レコードのデータ保存もしくは削除
-' Note  :
 ' ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 Private Sub Worksheet_BeforeDoubleClick(ByVal Target As Range, Cancel As Boolean)
 
+    Call Init
+
     Debug.Print "Double Clicked!"
     
-    Dim tableCls As New Table_Sample
-    Call tableCls.SaveOrDeleteOne(Target, Cancel)
+    Call m_repository.OpenConnection
+    Call m_sampleTable.SaveOrDeleteOne(Target, Cancel, m_repository)
+    Call m_repository.CloseConnection
 
 End Sub
 
